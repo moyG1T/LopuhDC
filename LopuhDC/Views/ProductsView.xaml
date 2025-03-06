@@ -1,0 +1,205 @@
+﻿<UserControl x:Class="LopuhDC.Views.ProductsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:LopuhDC.Views"
+             mc:Ignorable="d" 
+             xmlns:models="clr-namespace:LopuhDC.Data.Remote.Models" xmlns:viewmodels="clr-namespace:LopuhDC.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:ProductsViewModel}"
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type models:Product}">
+            <Border Height="100"
+                    BorderThickness="1"
+                    BorderBrush="{StaticResource GreenAccent}"
+                    Margin="4 2"
+                    CornerRadius="10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Rectangle RadiusX="10" RadiusY="10" Margin="5" StrokeThickness="1" Stroke="{StaticResource GreenAccent}">
+                        <Rectangle.Fill>
+                            <ImageBrush Stretch="UniformToFill"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding ProductType.Title}"/>
+                                <Rectangle Fill="Black" Margin="10" Width="1"/>
+                                <TextBlock Text="{Binding Title}"/>
+                            </StackPanel>
+
+                            <TextBlock Text="{Binding Cost, StringFormat={}{0:0} руб.}"
+                                       Margin="5 0"
+                                       Grid.Column="1"
+                                       HorizontalAlignment="Right"/>
+                        </Grid>
+
+                        <TextBlock Grid.Row="1"
+                                   Margin="0 -15 0 0"
+                                   Text="{Binding Article, StringFormat={}Артикул - {0}}"/>
+
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <TextBlock Text="Материалы:"/>
+
+                            <ItemsControl Grid.Column="1" ItemsSource="{Binding ProductMaterials}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Material.Title}" Margin="10 0"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Background="{StaticResource BlueAccent}" Grid.RowSpan="2"/>
+
+        <TextBlock Text="Список продуктов" Style="{StaticResource TitleText}"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal" Margin="10 0">
+                <TextBlock Text="Поиск" Margin="5 0"/>
+                <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10 0">
+                <TextBlock Text="Сортировка" Margin="5 0"/>
+                <ComboBox HorizontalAlignment="Left" SelectedIndex="{Binding AlphabeticFilter}">
+                    <ComboBoxItem>
+                        <TextBlock Text="А-Я"/>
+                    </ComboBoxItem>
+                    <ComboBoxItem>
+                        <TextBlock Text="Я-А"/>
+                    </ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10 0">
+                <TextBlock Text="Тип" Margin="5 0"/>
+                <ComboBox SelectedItem="{Binding SelectedType}"
+                          ItemsSource="{Binding ProductTypes}" 
+                          DisplayMemberPath="Title"
+                          HorizontalAlignment="Left"/>
+            </StackPanel>
+        </StackPanel>
+
+        <ListBox Grid.Row="2"
+                 ItemsSource="{Binding Products}"
+                 VirtualizingPanel.IsVirtualizing="True"
+                 VirtualizingPanel.ScrollUnit="Pixel"
+                 ScrollViewer.CanContentScroll="True"/>
+
+        <Grid Grid.Row="3" Height="50">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding CanSwipeLeft}" Value="False"/>
+                                <Condition Binding="{Binding CanSwipeRight}" Value="False"/>
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.Setters>
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </MultiDataTrigger.Setters>
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Border Background="{StaticResource BlueAccent}" Grid.ColumnSpan="3"/>
+
+            <ItemsControl Grid.Column="1" ItemsSource="{Binding PageNumbers}" HorizontalAlignment="Center">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Command="{Binding DataContext.SelectPageCommand,
+                                RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
+                                CommandParameter="{Binding}">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <TextBlock x:Name="Text" Text="{Binding Index}" Margin="5 0" Style="{StaticResource TitleText}"/>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="Text" Property="TextDecorations" Value="Underline"/>
+                                                    </Trigger>
+                                                    <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                        <Setter TargetName="Text" Property="TextDecorations" Value="Underline"/>
+                                                    </DataTrigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Button Content="&lt;" 
+                    Command="{Binding SwipeLeftCommand}"
+                    HorizontalAlignment="Right"
+                    FontSize="30"
+                    Style="{StaticResource TextButton}"
+                    IsEnabled="{Binding CanSwipeLeft}"/>
+            <Button Grid.Column="2" 
+                    Content="&gt;"
+                    Command="{Binding SwipeRightCommand}"
+                    HorizontalAlignment="Left"
+                    FontSize="30"
+                    Style="{StaticResource TextButton}"
+                    IsEnabled="{Binding CanSwipeRight}"/>
+        </Grid>
+    </Grid>
+</UserControl>

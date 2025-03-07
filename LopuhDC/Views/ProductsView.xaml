@@ -24,7 +24,7 @@
 
                     <Rectangle RadiusX="10" RadiusY="10" Margin="5" StrokeThickness="1" Stroke="{StaticResource GreenAccent}">
                         <Rectangle.Fill>
-                            <ImageBrush Stretch="UniformToFill"/>
+                            <ImageBrush ImageSource="{Binding BinImage, IsAsync=True}" Stretch="UniformToFill"/>
                         </Rectangle.Fill>
                     </Rectangle>
 

@@ -142,6 +142,7 @@
     <Compile Include="Data\Remote\Models\SalePoint.cs">
       <DependentUpon>MyLopuhDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Domain\Commands\PopCommand.cs" />
     <Compile Include="Domain\Commands\RelayCommand.cs" />
     <Compile Include="Domain\Contexts\ProductContext.cs" />
     <Compile Include="Domain\Models\SelectableInt.cs" />

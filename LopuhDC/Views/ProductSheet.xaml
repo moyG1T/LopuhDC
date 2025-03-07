@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:LopuhDC.Views" xmlns:viewmodels="clr-namespace:LopuhDC.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:ProductSheetViewModel}"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="600" d:DesignWidth="550">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
@@ -14,31 +14,41 @@
 
         <Grid>
             <Border Background="{StaticResource BlueAccent}"/>
+            <TextBlock Text="Продукт" HorizontalAlignment="Center" Style="{StaticResource TitleText}"/>
+            <Button Content="Назад" Style="{StaticResource TextButton}" FontSize="20" Command="{Binding GoBackCommand}"/>
         </Grid>
 
         <ScrollViewer Grid.Row="1">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top">
-                <Rectangle Stroke="{StaticResource GreenAccent}" StrokeThickness="1"
-                       RadiusX="10" RadiusY="10"
-                       Width="200" Height="200"
-                       VerticalAlignment="Top" Margin="5">
-                    <Rectangle.Fill>
-                        <ImageBrush ImageSource="{Binding}" Stretch="UniformToFill"/>
-                    </Rectangle.Fill>
-                </Rectangle>
+                <StackPanel Orientation="Vertical">
+                    <Rectangle Stroke="{StaticResource GreenAccent}" StrokeThickness="1"
+                               RadiusX="10" RadiusY="10"
+                               Width="200" Height="200"
+                               VerticalAlignment="Top" Margin="5">
+                        <Rectangle.Fill>
+                            <ImageBrush ImageSource="{Binding Product.BinImage}" Stretch="UniformToFill"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+
+                    <Button Content="Добавить фото" 
+                            Style="{StaticResource TextButton}" 
+                            FontSize="20"
+                            Command="{Binding OpenFileDialogCommand}"
+                            HorizontalAlignment="Center"/>
+                </StackPanel>
 
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5">
                         <TextBlock Text="Артикль" Margin="5 0"/>
-                        <TextBox Text="{Binding Product.Article}" Width="200"/>
+                        <TextBox Text="{Binding Product.Article, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5">
                         <TextBlock Text="Название" Margin="5 0"/>
-                        <TextBox Text="{Binding Product.Title}" Width="200"/>
+                        <TextBox Text="{Binding Product.Title, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5">
                         <TextBlock Text="Описание" Margin="5 0"/>
-                        <TextBox Text="{Binding Product.Subtitle}" 
+                        <TextBox Text="{Binding Product.Subtitle, UpdateSourceTrigger=PropertyChanged}" 
                              AcceptsReturn="True" 
                              Height="100" Width="200"
                              VerticalContentAlignment="Top"/>
@@ -53,7 +63,7 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5">
                         <TextBlock Text="Цена" Margin="5 0"/>
-                        <TextBox Text="{Binding Product.Cost}" Width="200"/>
+                        <TextBox Text="{Binding Product.Cost, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5">
                         <TextBlock Text="Материал" Margin="5 0"/>
@@ -64,19 +74,34 @@
                         Width="200"/>
                     </StackPanel>
 
-                    <Button Content="Добавить материал в список" FontSize="20" HorizontalAlignment="Center" Style="{StaticResource TextButton}" Margin="0 5"/>
+                    <Button Content="Добавить материал в список"
+                            Command="{Binding AddMaterialCommand}"
+                            FontSize="20" 
+                            HorizontalAlignment="Right"
+                            Style="{StaticResource TextButton}"
+                            Margin="0 5"/>
 
-                    <ListBox ItemsSource="{Binding AddedMaterials}">
+                    <ListBox ItemsSource="{Binding AddedMaterials}" 
+                             BorderThickness="1"
+                             BorderBrush="{StaticResource GreenAccent}"
+                             HorizontalAlignment="Right"
+                             MinHeight="100"
+                             Width="220">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="200"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    
-                                    <TextBlock Text="{Binding Title}"/>
-                                    <Button Grid.Column="1" Content="X" Style="{StaticResource TextButton}"/>
+
+                                    <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis"/>
+                                    <Button Grid.Column="1" Content="X" 
+                                            Style="{StaticResource TextButton}" 
+                                            Margin="0"
+                                            Command="{Binding DataContext.RemoveMaterialCommand,
+                                            RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                            CommandParameter="{Binding}"/>
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -84,5 +109,23 @@
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
+
+        <Button HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                Command="{Binding SaveChangesCommand}"
+                Grid.RowSpan="2" Margin="10">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <Border Background="{StaticResource GreenAccent}" CornerRadius="10" Padding="10 2">
+                                    <TextBlock Text="Сохранить" Foreground="White"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+        </Button>
     </Grid>
 </UserControl>

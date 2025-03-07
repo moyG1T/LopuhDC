@@ -1,0 +1,88 @@
+﻿<UserControl x:Class="LopuhDC.Views.ProductSheet"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:LopuhDC.Views" xmlns:viewmodels="clr-namespace:LopuhDC.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:ProductSheetViewModel}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Border Background="{StaticResource BlueAccent}"/>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top">
+                <Rectangle Stroke="{StaticResource GreenAccent}" StrokeThickness="1"
+                       RadiusX="10" RadiusY="10"
+                       Width="200" Height="200"
+                       VerticalAlignment="Top" Margin="5">
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="{Binding}" Stretch="UniformToFill"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5">
+                        <TextBlock Text="Артикль" Margin="5 0"/>
+                        <TextBox Text="{Binding Product.Article}" Width="200"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5">
+                        <TextBlock Text="Название" Margin="5 0"/>
+                        <TextBox Text="{Binding Product.Title}" Width="200"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5">
+                        <TextBlock Text="Описание" Margin="5 0"/>
+                        <TextBox Text="{Binding Product.Subtitle}" 
+                             AcceptsReturn="True" 
+                             Height="100" Width="200"
+                             VerticalContentAlignment="Top"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5">
+                        <TextBlock Text="Тип" Margin="5 0"/>
+                        <ComboBox 
+                        SelectedItem="{Binding SelectedType}"
+                        ItemsSource="{Binding ProductTypes}"
+                        DisplayMemberPath="Title"
+                        Width="200"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5">
+                        <TextBlock Text="Цена" Margin="5 0"/>
+                        <TextBox Text="{Binding Product.Cost}" Width="200"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5">
+                        <TextBlock Text="Материал" Margin="5 0"/>
+                        <ComboBox 
+                        SelectedItem="{Binding SelectedMaterial}"
+                        ItemsSource="{Binding AvailableMaterials}"
+                        DisplayMemberPath="Title"
+                        Width="200"/>
+                    </StackPanel>
+
+                    <Button Content="Добавить материал в список" FontSize="20" HorizontalAlignment="Center" Style="{StaticResource TextButton}" Margin="0 5"/>
+
+                    <ListBox ItemsSource="{Binding AddedMaterials}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <TextBlock Text="{Binding Title}"/>
+                                    <Button Grid.Column="1" Content="X" Style="{StaticResource TextButton}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

@@ -19,6 +19,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100"/>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
                     <Rectangle RadiusX="10" RadiusY="10" Margin="5" StrokeThickness="1" Stroke="{StaticResource GreenAccent}">
@@ -34,23 +35,11 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding ProductType.Title}"/>
-                                <Rectangle Fill="Black" Margin="10" Width="1"/>
-                                <TextBlock Text="{Binding Title}"/>
-                            </StackPanel>
-
-                            <TextBlock Text="{Binding Cost, StringFormat={}{0:0} руб.}"
-                                       Margin="5 0"
-                                       Grid.Column="1"
-                                       HorizontalAlignment="Right"/>
-                        </Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding ProductType.Title}"/>
+                            <Rectangle Fill="Black" Margin="10" Width="1"/>
+                            <TextBlock Text="{Binding Title}"/>
+                        </StackPanel>
 
                         <TextBlock Grid.Row="1"
                                    Margin="0 -15 0 0"
@@ -61,7 +50,7 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            
+
                             <TextBlock Text="Материалы:"/>
 
                             <ItemsControl Grid.Column="1" ItemsSource="{Binding ProductMaterials}">
@@ -77,6 +66,32 @@
                                 </ItemsControl.ItemsPanel>
                             </ItemsControl>
                         </Grid>
+                    </Grid>
+
+                    <Grid Grid.Column="2">
+                        <TextBlock Text="{Binding Cost, StringFormat={}Стоимость {0:0} руб.}"
+                                   Margin="5 0"
+                                   Grid.Column="1"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Top"/>
+
+                        <Button Content="Редактировать" 
+                                Style="{StaticResource TextButton}" 
+                                FontSize="20" 
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Margin="5 0"
+                                Command="{Binding DataContext.EditProductCommand,
+                                RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                CommandParameter="{Binding}"/>
+                        
+                        <Button Content="Удалить" 
+                                Style="{StaticResource TextButton}" 
+                                FontSize="20"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Bottom"
+                                Margin="5 0"
+                                Foreground="OrangeRed"/>
                     </Grid>
                 </Grid>
             </Border>
@@ -148,7 +163,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            
+
             <Border Background="{StaticResource BlueAccent}" Grid.ColumnSpan="3"/>
 
             <ItemsControl Grid.Column="1" ItemsSource="{Binding PageNumbers}" HorizontalAlignment="Center">

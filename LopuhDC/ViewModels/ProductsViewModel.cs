@@ -1,6 +1,8 @@
 ﻿using LopuhDC.Data.Remote.Models;
 using LopuhDC.Domain.Commands;
+using LopuhDC.Domain.Contexts;
 using LopuhDC.Domain.Models;
+using LopuhDC.Domain.Services;
 using LopuhDC.Domain.Utilities;
 using System;
 using System.Collections.Generic;
@@ -13,6 +15,8 @@ namespace LopuhDC.ViewModels
 {
     public class ProductsViewModel : ViewModel
     {
+        private readonly INavService _navService;
+        private readonly ProductContext _context;
         private readonly LopuhDbEntities _db;
 
         private readonly int _totalPageCount = 0;
@@ -72,15 +76,21 @@ namespace LopuhDC.ViewModels
         public ICommand SelectPageCommand { get; }
         public ICommand SwipeLeftCommand { get; }
         public ICommand SwipeRightCommand { get; }
+        public ICommand EditProductCommand { get; }
+        public ICommand RemoveProductCommand { get; }
 
-        public ProductsViewModel(LopuhDbEntities db)
+        public ProductsViewModel(INavService navService, ProductContext context, LopuhDbEntities db)
         {
             SelectPageCommand = new RelayCommand(ShowCurrentPage);
             SwipeLeftCommand = new RelayCommand(SwipeLeft);
             SwipeRightCommand = new RelayCommand(SwipeRight);
+            EditProductCommand = new RelayCommand(EditProduct);
 
+            _navService = navService;
+            _context = context;
             _db = db;
 
+            #region 
             //var path = "C:\\Users\\Welcome\\Desktop";
             //// "C:\Users\Welcome\Desktop\лопух\products\paper_20.jpeg"
             //var products = _db.Products.ToList();
@@ -96,7 +106,8 @@ namespace LopuhDC.ViewModels
             //        continue;
             //    }
             //}
-            //_db.SaveChanges();
+            //_db.SaveChanges(); 
+            #endregion
 
             _productTypes = _db.ProductTypes.ToList();
 
@@ -390,6 +401,15 @@ namespace LopuhDC.ViewModels
                         : _sortedProducts.OrderByDescending(it => it.Title).ToList();
                 }
                 CheckSwipes();
+            }
+        }
+
+        private void EditProduct(object param)
+        {
+            if (param is Product product)
+            {
+                _context.Product = product;
+                _navService.Push();
             }
         }
 

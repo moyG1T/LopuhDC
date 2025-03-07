@@ -25,6 +25,7 @@ namespace LopuhDC
         {
             // Contexts
             services.AddSingleton<MainContext>();
+            services.AddSingleton<ProductContext>();
             services.AddSingleton<LopuhDbEntities>();
 
             // ViewModels
@@ -32,6 +33,7 @@ namespace LopuhDC
             services.AddSingleton(MainWindowFactory);
 
             services.AddTransient(ProductsViewModelFactory);
+            services.AddTransient(ProductSheetViewModelFactory);
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -59,14 +61,26 @@ namespace LopuhDC
         }
         protected ProductsViewModel ProductsViewModelFactory(IServiceProvider p)
         {
-            return new ProductsViewModel(p.GetRequiredService<LopuhDbEntities>());
+            return new ProductsViewModel(ProductSheetNavFactory(p), p.GetRequiredService<ProductContext>(), p.GetRequiredService<LopuhDbEntities>());
+        }
+        protected ProductSheetViewModel ProductSheetViewModelFactory(IServiceProvider p)
+        {
+            return new ProductSheetViewModel(BackNavFactory(p), p.GetRequiredService<ProductContext>(), p.GetRequiredService<LopuhDbEntities>());
         }
         #endregion
 
         #region nav factories
+        protected MainNavService BackNavFactory(IServiceProvider p)
+        {
+            return new MainNavService(p.GetRequiredService<MainContext>());
+        }
         protected MainNavService ProductsNavFactory(IServiceProvider p)
         {
             return new MainNavService(p.GetRequiredService<MainContext>(), p.GetRequiredService<ProductsViewModel>);
+        }
+        protected MainNavService ProductSheetNavFactory(IServiceProvider p)
+        {
+            return new MainNavService(p.GetRequiredService<MainContext>(), p.GetRequiredService<ProductSheetViewModel>);
         }
         #endregion
     }

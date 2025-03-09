@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 
 namespace LopuhDC.ViewModels
@@ -22,7 +23,7 @@ namespace LopuhDC.ViewModels
         private readonly int _totalPageCount = 0;
         private int _pageCount = 0;
         private readonly int _pageSize = 20;
-        private bool _reachedEnd;
+        private bool _lastPageLoaded = false;
 
         private SelectableInt _currentIndex = new SelectableInt(1);
 
@@ -69,7 +70,7 @@ namespace LopuhDC.ViewModels
         public ProductType SelectedType
         {
             get => _selectedType;
-            set { _selectedType = value; ApplyFilters(); }
+            set { _selectedType = value; ApplyFilters(); OnPropertyChanged(); }
         }
         public List<ProductType> ProductTypes => _productTypes;
 
@@ -78,6 +79,8 @@ namespace LopuhDC.ViewModels
         public ICommand SwipeRightCommand { get; }
         public ICommand EditProductCommand { get; }
         public ICommand RemoveProductCommand { get; }
+        public ICommand AddNewProductCommand { get; }
+        public ICommand ResetTypeFilterCommand { get; }
 
         public ProductsViewModel(INavService navService, ProductContext context, LopuhDbEntities db)
         {
@@ -85,29 +88,15 @@ namespace LopuhDC.ViewModels
             SwipeLeftCommand = new RelayCommand(SwipeLeft);
             SwipeRightCommand = new RelayCommand(SwipeRight);
             EditProductCommand = new RelayCommand(EditProduct);
+            AddNewProductCommand = new PushCommand(navService);
+            RemoveProductCommand = new RelayCommand(RemoveProduct);
+            ResetTypeFilterCommand = new RelayCommand(ResetTypeFilter);
 
             _navService = navService;
             _context = context;
             _db = db;
 
-            #region 
-            //var path = "C:\\Users\\Welcome\\Desktop";
-            //// "C:\Users\Welcome\Desktop\лопух\products\paper_20.jpeg"
-            //var products = _db.Products.ToList();
-            //foreach (var item in products)
-            //{
-            //    try
-            //    {
-            //        var fullpath = path + item.ImagePath;
-            //        item.BinImage = File.ReadAllBytes(fullpath);
-            //    }
-            //    catch (Exception)
-            //    {
-            //        continue;
-            //    }
-            //}
-            //_db.SaveChanges(); 
-            #endregion
+            _context.ProductAdded += OnProductAdded;
 
             _productTypes = _db.ProductTypes.ToList();
 
@@ -125,6 +114,7 @@ namespace LopuhDC.ViewModels
 
                 _currentIndex = PageNumbers.First();
                 _currentIndex.IsSelected = true;
+                _currentIndex.Loaded = true;
 
                 CanSwipeRight = true;
 
@@ -132,8 +122,6 @@ namespace LopuhDC.ViewModels
             }
             else
             {
-                _reachedEnd = true;
-
                 _allUnsortedProducts = _db.Products.ToList();
 
                 Products = _allUnsortedProducts;
@@ -146,11 +134,14 @@ namespace LopuhDC.ViewModels
             {
                 var offset = selectableInt.Index;
 
-                if (offset == _currentIndex.Index)
-                    return;
-                _currentIndex.IsSelected = false;
-                _currentIndex = selectableInt;
-                _currentIndex.IsSelected = true;
+                //if (offset == _currentIndex.Index)
+                //    return;
+                if (offset != _currentIndex.Index)
+                {
+                    _currentIndex.IsSelected = false;
+                    _currentIndex = selectableInt;
+                    _currentIndex.IsSelected = true;
+                }
 
                 CheckSwipes();
 
@@ -170,9 +161,22 @@ namespace LopuhDC.ViewModels
                         .Take(_pageSize)
                         .ToList();
 
-                if (page.Count < _pageCount && !_reachedEnd)
+                if ((page.Count < _pageCount || !_currentIndex.Loaded) && _sortedProducts.Count == 0)
                 {
-                    page = LoadMoreFromRemote(offset);
+                    try
+                    {
+                        var lastPage = PageNumbers.Last().Index == selectableInt.Index;
+
+                        if (!(lastPage && _lastPageLoaded))
+                        {
+                            page = LoadMoreFromRemote(offset);
+                            _currentIndex.Loaded = true;
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                    }
                 }
 
                 Products = page;
@@ -180,11 +184,6 @@ namespace LopuhDC.ViewModels
         }
         private List<Product> LoadMoreFromRemote(int offset)
         {
-            if (_reachedEnd)
-            {
-                return new List<Product>();
-            }
-
             var products = AlphabeticFilter == 0
                     ? _db.Products
                         .OrderBy(it => it.Title)
@@ -198,11 +197,6 @@ namespace LopuhDC.ViewModels
                         .ToList();
 
             _allUnsortedProducts.AddRange(products);
-
-            if (products.Count < _pageCount)
-            {
-                _reachedEnd = true;
-            }
 
             return products;
         }
@@ -294,12 +288,11 @@ namespace LopuhDC.ViewModels
                 _sortedProducts.Clear();
                 PageNumbers = Enumerable.Range(1, _totalPageCount).Select(it => new SelectableInt(it)).ToList();
 
-                _reachedEnd = false;
-
                 if (_totalPageCount > 0)
                 {
                     _currentIndex = PageNumbers.First();
                     _currentIndex.IsSelected = true;
+                    _currentIndex.Loaded = true;
 
                     var products = _sortedProducts.Count > 0 ? _sortedProducts : _allUnsortedProducts;
 
@@ -315,8 +308,6 @@ namespace LopuhDC.ViewModels
                 }
                 else
                 {
-                    _reachedEnd = true;
-
                     Products = AlphabeticFilter == 0
                         ? _allUnsortedProducts.OrderBy(it => it.Title).ToList()
                         : _allUnsortedProducts.OrderByDescending(it => it.Title).ToList();
@@ -333,12 +324,11 @@ namespace LopuhDC.ViewModels
 
                 PageNumbers = Enumerable.Range(1, _pageCount).Select(it => new SelectableInt(it)).ToList();
 
-                _reachedEnd = false;
-
                 if (_pageCount > 0)
                 {
                     _currentIndex = PageNumbers.First();
                     _currentIndex.IsSelected = true;
+                    _currentIndex.Loaded = true;
 
                     Products = AlphabeticFilter == 0
                         ? _sortedProducts
@@ -352,8 +342,6 @@ namespace LopuhDC.ViewModels
                 }
                 else
                 {
-                    _reachedEnd = true;
-
                     Products = AlphabeticFilter == 0
                         ? _sortedProducts.OrderBy(it => it.Title).ToList()
                         : _sortedProducts.OrderByDescending(it => it.Title).ToList();
@@ -375,12 +363,11 @@ namespace LopuhDC.ViewModels
 
                 PageNumbers = Enumerable.Range(1, _pageCount).Select(it => new SelectableInt(it)).ToList();
 
-                _reachedEnd = false;
-
                 if (_pageCount > 0)
                 {
                     _currentIndex = PageNumbers.First();
                     _currentIndex.IsSelected = true;
+                    _currentIndex.Loaded = true;
 
                     Products = AlphabeticFilter == 0
                         ? _sortedProducts
@@ -394,14 +381,19 @@ namespace LopuhDC.ViewModels
                 }
                 else
                 {
-                    _reachedEnd = true;
-
                     Products = AlphabeticFilter == 0
                         ? _sortedProducts.OrderBy(it => it.Title).ToList()
                         : _sortedProducts.OrderByDescending(it => it.Title).ToList();
                 }
                 CheckSwipes();
             }
+
+            ResetPageLoadedProperty();
+            _lastPageLoaded = false;
+        }
+        private void ResetTypeFilter()
+        {
+            SelectedType = null;
         }
 
         private void EditProduct(object param)
@@ -413,8 +405,63 @@ namespace LopuhDC.ViewModels
             }
         }
 
+        private void OnProductAdded(Product product)
+        {
+            if (_sortedProducts.Count > 0)
+            {
+                _sortedProducts.Add(product);
+            }
+
+            _allUnsortedProducts.Add(product);
+
+            ResetPageLoadedProperty();
+            ShowCurrentPage(_currentIndex);
+        }
+        private void RemoveProduct(object param)
+        {
+            if (param is Product product)
+            {
+                var result = MessageBox.Show("Удалить?", "Внимание", MessageBoxButton.YesNo);
+
+                if (result == MessageBoxResult.Cancel || result == MessageBoxResult.No)
+                {
+                    return;
+                }
+
+                if (_sortedProducts.Contains(product))
+                {
+                    _sortedProducts.Remove(product);
+                }
+
+                _allUnsortedProducts.Remove(product);
+
+                DeleteProduct(product);
+
+                ResetPageLoadedProperty();
+                ShowCurrentPage(_currentIndex);
+            }
+        }
+        private void DeleteProduct(Product product)
+        {
+            if (product.ProductMaterials.Count > 0)
+            {
+                _db.ProductMaterials.RemoveRange(product.ProductMaterials);
+                _db.SaveChanges();
+            }
+
+            _db.Products.Remove(product);
+            _db.SaveChanges();
+        }
+
+        private void ResetPageLoadedProperty()
+        {
+            PageNumbers.ForEach(it => it.Loaded = false);
+        }
+
         public override void Dispose()
         {
+            _context.ProductAdded -= OnProductAdded;
+
             GC.SuppressFinalize(this);
         }
     }

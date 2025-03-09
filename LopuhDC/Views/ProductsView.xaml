@@ -23,9 +23,24 @@
                     </Grid.ColumnDefinitions>
 
                     <Rectangle RadiusX="10" RadiusY="10" Margin="5" StrokeThickness="1" Stroke="{StaticResource GreenAccent}">
-                        <Rectangle.Fill>
-                            <ImageBrush ImageSource="{Binding BinImage, IsAsync=True}" Stretch="UniformToFill"/>
-                        </Rectangle.Fill>
+                        <Rectangle.Style>
+                            <Style TargetType="Rectangle">
+                                <Setter Property="Fill">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{Binding BinImage, IsAsync=True}" Stretch="UniformToFill"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding BinImage}" Value="{x:Null}">
+                                        <Setter Property="Fill">
+                                            <Setter.Value>
+                                                <ImageBrush ImageSource="\Assets\Images\lopuh.png" Stretch="UniformToFill"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Rectangle.Style>
                     </Rectangle>
 
                     <Grid Grid.Column="1">
@@ -84,13 +99,16 @@
                                 Command="{Binding DataContext.EditProductCommand,
                                 RelativeSource={RelativeSource AncestorType=ListBox}}"
                                 CommandParameter="{Binding}"/>
-                        
+
                         <Button Content="Удалить" 
                                 Style="{StaticResource TextButton}" 
                                 FontSize="20"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
                                 Margin="5 0"
+                                Command="{Binding DataContext.RemoveProductCommand,
+                                RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                CommandParameter="{Binding}"
                                 Foreground="OrangeRed"/>
                     </Grid>
                 </Grid>
@@ -133,7 +151,23 @@
                           DisplayMemberPath="Title"
                           HorizontalAlignment="Left"/>
             </StackPanel>
+
+            <Button Content="X" 
+                    Command="{Binding ResetTypeFilterCommand}"
+                    Style="{StaticResource TextButton}"
+                    Grid.Row="1"
+                    FontSize="20"
+                    Margin="0"
+                    VerticalAlignment="Center"/>
         </StackPanel>
+
+        <Button Content="Добавить продукт" 
+                Command="{Binding AddNewProductCommand}"
+                Style="{StaticResource TextButton}"
+                Grid.Row="1"
+                FontSize="20"
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Center" />
 
         <ListBox Grid.Row="2"
                  ItemsSource="{Binding Products}"

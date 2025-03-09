@@ -142,7 +142,11 @@
     <Compile Include="Data\Remote\Models\SalePoint.cs">
       <DependentUpon>MyLopuhDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Data\Remote\Models\sysdiagram.cs">
+      <DependentUpon>MyLopuhDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Domain\Commands\PopCommand.cs" />
+    <Compile Include="Domain\Commands\PushCommand.cs" />
     <Compile Include="Domain\Commands\RelayCommand.cs" />
     <Compile Include="Domain\Contexts\ProductContext.cs" />
     <Compile Include="Domain\Models\SelectableInt.cs" />
@@ -216,10 +220,15 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Assets\Images\" />
     <Folder Include="Data\Remote\ObservableModels\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Images\lopuh.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Images\lopuh.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data\Remote\Models\MyLopuhDb.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>MyLopuhDb.Context.cs</LastGenOutput>

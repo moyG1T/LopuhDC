@@ -5,33 +5,34 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="4fb7a43b033246dc8ca729a1ea8286fc" Name="Diagram1">
-        <EntityTypeShape EntityType="MyLopuhDbModel.Agent" Width="1.5" PointX="3.75" PointY="12.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="MyLopuhDbModel.AgentType" Width="1.5" PointX="1.5" PointY="13.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="MyLopuhDbModel.DeliveryType" Width="1.5" PointX="1.5" PointY="7.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="MyLopuhDbModel.Manager" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="MyLopuhDbModel.Material" Width="1.5" PointX="8" PointY="8" IsExpanded="true" />
-        <EntityTypeShape EntityType="MyLopuhDbModel.MaterialType" Width="1.5" PointX="5.75" PointY="8.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="MyLopuhDbModel.MaterialUnit" Width="1.5" PointX="5.75" PointY="0.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="MyLopuhDbModel.Order" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="MyLopuhDbModel.OrderDecision" Width="1.5" PointX="3" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="MyLopuhDbModel.OrderState" Width="1.5" PointX="0.75" PointY="9.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="MyLopuhDbModel.Priority" Width="1.5" PointX="6" PointY="3.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="MyLopuhDbModel.Product" Width="1.5" PointX="8" PointY="17.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="MyLopuhDbModel.ProductMaterial" Width="1.5" PointX="10.25" PointY="8.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="MyLopuhDbModel.ProductType" Width="1.5" PointX="5.75" PointY="18.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="MyLopuhDbModel.SalePoint" Width="1.5" PointX="8.75" PointY="1.875" IsExpanded="true" />
-        <AssociationConnector Association="MyLopuhDbModel.FK_Agent_AgentType" ManuallyRouted="false" />
-        <AssociationConnector Association="MyLopuhDbModel.FK_Priority_Agent" ManuallyRouted="false" />
-        <AssociationConnector Association="MyLopuhDbModel.FK_Order_DeliveryType" ManuallyRouted="false" />
-        <AssociationConnector Association="MyLopuhDbModel.FK_OrderDecision_Manager" ManuallyRouted="false" />
-        <AssociationConnector Association="MyLopuhDbModel.FK_Priority_Manager" ManuallyRouted="false" />
-        <AssociationConnector Association="MyLopuhDbModel.FK_Material_MaterialType" ManuallyRouted="false" />
-        <AssociationConnector Association="MyLopuhDbModel.FK_Material_MaterialUnit" ManuallyRouted="false" />
-        <AssociationConnector Association="MyLopuhDbModel.FK_ProductMaterial_Material" ManuallyRouted="false" />
-        <AssociationConnector Association="MyLopuhDbModel.FK_OrderDecision_Order" ManuallyRouted="false" />
-        <AssociationConnector Association="MyLopuhDbModel.FK_OrderDecision_OrderState" ManuallyRouted="false" />
-        <AssociationConnector Association="MyLopuhDbModel.FK_Product_ProductType1" ManuallyRouted="false" />
-        <AssociationConnector Association="MyLopuhDbModel.FK_ProductMaterial_Product" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="MyLopuhDbModel.Agent" Width="1.5" PointX="3.75" PointY="12.125" />
+        <EntityTypeShape EntityType="MyLopuhDbModel.AgentType" Width="1.5" PointX="1.5" PointY="13.25" />
+        <EntityTypeShape EntityType="MyLopuhDbModel.DeliveryType" Width="1.5" PointX="1.5" PointY="7.125" />
+        <EntityTypeShape EntityType="MyLopuhDbModel.Manager" Width="1.5" PointX="0.75" PointY="3.75" />
+        <EntityTypeShape EntityType="MyLopuhDbModel.Material" Width="1.5" PointX="8" PointY="8" />
+        <EntityTypeShape EntityType="MyLopuhDbModel.MaterialType" Width="1.5" PointX="5.75" PointY="8.875" />
+        <EntityTypeShape EntityType="MyLopuhDbModel.MaterialUnit" Width="1.5" PointX="5.75" PointY="0.875" />
+        <EntityTypeShape EntityType="MyLopuhDbModel.Order" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="MyLopuhDbModel.OrderDecision" Width="1.5" PointX="3" PointY="3.75" />
+        <EntityTypeShape EntityType="MyLopuhDbModel.OrderState" Width="1.5" PointX="0.75" PointY="9.625" />
+        <EntityTypeShape EntityType="MyLopuhDbModel.Priority" Width="1.5" PointX="6" PointY="3.875" />
+        <EntityTypeShape EntityType="MyLopuhDbModel.Product" Width="1.5" PointX="8" PointY="17.5" />
+        <EntityTypeShape EntityType="MyLopuhDbModel.ProductMaterial" Width="1.5" PointX="10.25" PointY="8.5" />
+        <EntityTypeShape EntityType="MyLopuhDbModel.ProductType" Width="1.5" PointX="5.75" PointY="18.875" />
+        <EntityTypeShape EntityType="MyLopuhDbModel.SalePoint" Width="1.5" PointX="8.75" PointY="1.875" />
+        <EntityTypeShape EntityType="MyLopuhDbModel.sysdiagram" Width="1.5" PointX="8.75" PointY="4.875" />
+        <AssociationConnector Association="MyLopuhDbModel.FK_Agent_AgentType" />
+        <AssociationConnector Association="MyLopuhDbModel.FK_Priority_Agent" />
+        <AssociationConnector Association="MyLopuhDbModel.FK_Order_DeliveryType" />
+        <AssociationConnector Association="MyLopuhDbModel.FK_OrderDecision_Manager" />
+        <AssociationConnector Association="MyLopuhDbModel.FK_Priority_Manager" />
+        <AssociationConnector Association="MyLopuhDbModel.FK_Material_MaterialType" />
+        <AssociationConnector Association="MyLopuhDbModel.FK_Material_MaterialUnit" />
+        <AssociationConnector Association="MyLopuhDbModel.FK_ProductMaterial_Material" />
+        <AssociationConnector Association="MyLopuhDbModel.FK_OrderDecision_Order" />
+        <AssociationConnector Association="MyLopuhDbModel.FK_OrderDecision_OrderState" />
+        <AssociationConnector Association="MyLopuhDbModel.FK_Product_ProductType1" />
+        <AssociationConnector Association="MyLopuhDbModel.FK_ProductMaterial_Product" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

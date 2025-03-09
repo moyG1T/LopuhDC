@@ -12,6 +12,9 @@ namespace LopuhDC.Domain.Models
         private bool _isSelected;
 
         public int Index { get; set; }
+
+        public bool Loaded { get; set; }
+
         public bool IsSelected
         {
             get => _isSelected; set

@@ -18,6 +18,7 @@ namespace LopuhDC.ViewModels
     {
         private readonly ProductContext _context;
         private readonly LopuhDbEntities _db;
+        private readonly int _originalArticle;
         private readonly List<Material> _originalMaterials = new List<Material>();
         private readonly HashSet<int> _removedOriginalMaterialIds = new HashSet<int>();
 
@@ -40,7 +41,8 @@ namespace LopuhDC.ViewModels
             _db = db;
 
             ProductTypes = _db.ProductTypes.ToList();
-            AvailableMaterials = new ObservableCollection<Material>(_db.Materials.ToList());
+
+            var materials = _db.Materials.ToList();
 
             GoBackCommand = new PopCommand(navService);
             AddMaterialCommand = new RelayCommand(AddMaterial);
@@ -73,9 +75,15 @@ namespace LopuhDC.ViewModels
                     Width = p.Width,
                 };
 
+                _originalArticle = p.Article;
                 _originalMaterials = Product.ProductMaterials.Select(it => it.Material).ToList();
                 AddedMaterials = new ObservableCollection<Material>(_originalMaterials);
+                AvailableMaterials = new ObservableCollection<Material>(materials.Except(_originalMaterials));
                 SelectedType = Product.ProductType;
+            }
+            else
+            {
+                AvailableMaterials = new ObservableCollection<Material>(materials);
             }
         }
 
@@ -120,6 +128,27 @@ namespace LopuhDC.ViewModels
         {
             try
             {
+                var articleEmpty = string.IsNullOrEmpty(Product.Article.ToString());
+                var titleEmpty = string.IsNullOrEmpty(Product.Title);
+                var typeEmpty = SelectedType == null;
+                var costEmpty = string.IsNullOrEmpty(Product.Cost.ToString());
+
+                if (articleEmpty || titleEmpty || typeEmpty || costEmpty)
+                {
+                    MessageBox.Show("Пустые поля");
+                    return;
+                }
+
+                if (_originalArticle != Product.Article)
+                {
+                    var articleOccupied = _db.Products.Any(it => it.Article == Product.Article);
+                    if (articleOccupied)
+                    {
+                        MessageBox.Show("Артикль занят");
+                        return;
+                    }
+                }
+
                 if (Product.Id == 0)
                 {
                     AddNewProduct();
@@ -139,7 +168,31 @@ namespace LopuhDC.ViewModels
 
         private void AddNewProduct()
         {
-            throw new NotImplementedException();
+            var newProduct = new Product
+            {
+                Article = Product.Article,
+                BinImage = Product.BinImage,
+                Title = Product.Title,
+                Subtitle = Product.Subtitle,
+                Cost = Product.Cost,
+                TypeId = SelectedType.Id,
+                ProductType = SelectedType,
+            };
+
+            _db.Products.Add(newProduct);
+            _db.SaveChanges();
+
+            var newProductMaterials = AddedMaterials.Select(it => new ProductMaterial
+            {
+                MaterialId = it.Id,
+                ProductId = newProduct.Id,
+                MaterialCount = 1,
+            });
+
+            _db.ProductMaterials.AddRange(newProductMaterials);
+            _db.SaveChanges();
+
+            _context.AddProductNotification(newProduct);
         }
 
         private void SaveProductUpdates()
@@ -147,6 +200,7 @@ namespace LopuhDC.ViewModels
             var p = _context.Product;
 
             p.Article = Product.Article;
+            p.BinImage = Product.BinImage;
             p.Title = Product.Title;
             p.Subtitle = Product.Subtitle;
             p.Cost = Product.Cost;
@@ -187,6 +241,7 @@ namespace LopuhDC.ViewModels
 
         public override void Dispose()
         {
+            _context.Product = null;
             GC.SuppressFinalize(this);
         }
     }

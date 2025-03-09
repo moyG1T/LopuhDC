@@ -40,5 +40,6 @@ namespace LopuhDC.Data.Remote.Models
         public virtual DbSet<ProductMaterial> ProductMaterials { get; set; }
         public virtual DbSet<ProductType> ProductTypes { get; set; }
         public virtual DbSet<SalePoint> SalePoints { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
     }
 }

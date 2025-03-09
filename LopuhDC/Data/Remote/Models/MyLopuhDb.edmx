@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="Хранилище MyLopuhDbModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Хранилище MyLopuhDbModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Agent">
           <Key>
             <PropertyRef Name="Id" />
@@ -134,7 +134,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ProductId" Type="int" Nullable="false" />
           <Property Name="MaterialId" Type="int" Nullable="false" />
           <Property Name="MaterialCount" Type="int" Nullable="false" />
@@ -152,6 +152,16 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Title" Type="nvarchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
         </EntityType>
         <Association Name="FK_Agent_AgentType">
           <End Role="AgentType" Type="Self.AgentType" Multiplicity="0..1" />
@@ -313,6 +323,7 @@
           <EntitySet Name="ProductMaterial" EntityType="Self.ProductMaterial" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductType" EntityType="Self.ProductType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SalePoint" EntityType="Self.SalePoint" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Agent_AgentType" Association="Self.FK_Agent_AgentType">
             <End Role="AgentType" EntitySet="AgentType" />
             <End Role="Agent" EntitySet="Agent" />
@@ -362,82 +373,147 @@
             <End Role="ProductMaterial" EntitySet="ProductMaterial" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="MyLopuhDbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="LopuhDbEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Agents" EntityType="MyLopuhDbModel.Agent" />
+          <EntitySet Name="AgentTypes" EntityType="MyLopuhDbModel.AgentType" />
+          <EntitySet Name="DeliveryTypes" EntityType="MyLopuhDbModel.DeliveryType" />
+          <EntitySet Name="Managers" EntityType="MyLopuhDbModel.Manager" />
+          <EntitySet Name="Materials" EntityType="MyLopuhDbModel.Material" />
+          <EntitySet Name="MaterialTypes" EntityType="MyLopuhDbModel.MaterialType" />
+          <EntitySet Name="MaterialUnits" EntityType="MyLopuhDbModel.MaterialUnit" />
+          <EntitySet Name="Orders" EntityType="MyLopuhDbModel.Order" />
+          <EntitySet Name="OrderDecisions" EntityType="MyLopuhDbModel.OrderDecision" />
+          <EntitySet Name="OrderStates" EntityType="MyLopuhDbModel.OrderState" />
+          <EntitySet Name="Priorities" EntityType="MyLopuhDbModel.Priority" />
+          <EntitySet Name="Products" EntityType="MyLopuhDbModel.Product" />
+          <EntitySet Name="ProductMaterials" EntityType="MyLopuhDbModel.ProductMaterial" />
+          <EntitySet Name="ProductTypes" EntityType="MyLopuhDbModel.ProductType" />
+          <EntitySet Name="SalePoints" EntityType="MyLopuhDbModel.SalePoint" />
+          <EntitySet Name="sysdiagrams" EntityType="MyLopuhDbModel.sysdiagram" />
+          <AssociationSet Name="FK_Agent_AgentType" Association="MyLopuhDbModel.FK_Agent_AgentType">
+            <End Role="AgentType" EntitySet="AgentTypes" />
+            <End Role="Agent" EntitySet="Agents" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Priority_Agent" Association="MyLopuhDbModel.FK_Priority_Agent">
+            <End Role="Agent" EntitySet="Agents" />
+            <End Role="Priority" EntitySet="Priorities" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Order_DeliveryType" Association="MyLopuhDbModel.FK_Order_DeliveryType">
+            <End Role="DeliveryType" EntitySet="DeliveryTypes" />
+            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrderDecision_Manager" Association="MyLopuhDbModel.FK_OrderDecision_Manager">
+            <End Role="Manager" EntitySet="Managers" />
+            <End Role="OrderDecision" EntitySet="OrderDecisions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Priority_Manager" Association="MyLopuhDbModel.FK_Priority_Manager">
+            <End Role="Manager" EntitySet="Managers" />
+            <End Role="Priority" EntitySet="Priorities" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Material_MaterialType" Association="MyLopuhDbModel.FK_Material_MaterialType">
+            <End Role="MaterialType" EntitySet="MaterialTypes" />
+            <End Role="Material" EntitySet="Materials" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Material_MaterialUnit" Association="MyLopuhDbModel.FK_Material_MaterialUnit">
+            <End Role="MaterialUnit" EntitySet="MaterialUnits" />
+            <End Role="Material" EntitySet="Materials" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProductMaterial_Material" Association="MyLopuhDbModel.FK_ProductMaterial_Material">
+            <End Role="Material" EntitySet="Materials" />
+            <End Role="ProductMaterial" EntitySet="ProductMaterials" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrderDecision_Order" Association="MyLopuhDbModel.FK_OrderDecision_Order">
+            <End Role="Order" EntitySet="Orders" />
+            <End Role="OrderDecision" EntitySet="OrderDecisions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrderDecision_OrderState" Association="MyLopuhDbModel.FK_OrderDecision_OrderState">
+            <End Role="OrderState" EntitySet="OrderStates" />
+            <End Role="OrderDecision" EntitySet="OrderDecisions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Product_ProductType1" Association="MyLopuhDbModel.FK_Product_ProductType1">
+            <End Role="ProductType" EntitySet="ProductTypes" />
+            <End Role="Product" EntitySet="Products" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProductMaterial_Product" Association="MyLopuhDbModel.FK_ProductMaterial_Product">
+            <End Role="Product" EntitySet="Products" />
+            <End Role="ProductMaterial" EntitySet="ProductMaterials" />
+          </AssociationSet>
+        </EntityContainer>
         <EntityType Name="Agent">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="TypeId" Type="Int32" />
           <Property Name="INN" Type="Int32" Nullable="false" />
           <Property Name="KPP" Type="Int32" />
-          <Property Name="Surname" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Surname" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Patronymic" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Logo" Type="Binary" MaxLength="Max" FixedLength="false" />
-          <Property Name="PhoneNo" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Address" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="AgentType" Relationship="Self.FK_Agent_AgentType" FromRole="Agent" ToRole="AgentType" />
-          <NavigationProperty Name="Priorities" Relationship="Self.FK_Priority_Agent" FromRole="Agent" ToRole="Priority" />
+          <Property Name="PhoneNo" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AgentType" Relationship="MyLopuhDbModel.FK_Agent_AgentType" FromRole="Agent" ToRole="AgentType" />
+          <NavigationProperty Name="Priorities" Relationship="MyLopuhDbModel.FK_Priority_Agent" FromRole="Agent" ToRole="Priority" />
         </EntityType>
         <EntityType Name="AgentType">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Title" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Agents" Relationship="Self.FK_Agent_AgentType" FromRole="AgentType" ToRole="Agent" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Agents" Relationship="MyLopuhDbModel.FK_Agent_AgentType" FromRole="AgentType" ToRole="Agent" />
         </EntityType>
         <EntityType Name="DeliveryType">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Orders" Relationship="Self.FK_Order_DeliveryType" FromRole="DeliveryType" ToRole="Order" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Orders" Relationship="MyLopuhDbModel.FK_Order_DeliveryType" FromRole="DeliveryType" ToRole="Order" />
         </EntityType>
         <EntityType Name="Manager">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Surname" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Surname" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Patronymic" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="PhoneNo" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="OrderDecisions" Relationship="Self.FK_OrderDecision_Manager" FromRole="Manager" ToRole="OrderDecision" />
-          <NavigationProperty Name="Priorities" Relationship="Self.FK_Priority_Manager" FromRole="Manager" ToRole="Priority" />
+          <Property Name="PhoneNo" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="OrderDecisions" Relationship="MyLopuhDbModel.FK_OrderDecision_Manager" FromRole="Manager" ToRole="OrderDecision" />
+          <NavigationProperty Name="Priorities" Relationship="MyLopuhDbModel.FK_Priority_Manager" FromRole="Manager" ToRole="Priority" />
         </EntityType>
         <EntityType Name="Material">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="TypeId" Type="Int32" Nullable="false" />
           <Property Name="Count" Type="Int32" Nullable="false" />
           <Property Name="UnitId" Type="Int32" Nullable="false" />
           <Property Name="WarehouseCount" Type="Int32" Nullable="false" />
           <Property Name="MinCount" Type="Int32" Nullable="false" />
           <Property Name="Cost" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="MaterialType" Relationship="Self.FK_Material_MaterialType" FromRole="Material" ToRole="MaterialType" />
-          <NavigationProperty Name="MaterialUnit" Relationship="Self.FK_Material_MaterialUnit" FromRole="Material" ToRole="MaterialUnit" />
-          <NavigationProperty Name="ProductMaterials" Relationship="Self.FK_ProductMaterial_Material" FromRole="Material" ToRole="ProductMaterial" />
+          <NavigationProperty Name="MaterialType" Relationship="MyLopuhDbModel.FK_Material_MaterialType" FromRole="Material" ToRole="MaterialType" />
+          <NavigationProperty Name="MaterialUnit" Relationship="MyLopuhDbModel.FK_Material_MaterialUnit" FromRole="Material" ToRole="MaterialUnit" />
+          <NavigationProperty Name="ProductMaterials" Relationship="MyLopuhDbModel.FK_ProductMaterial_Material" FromRole="Material" ToRole="ProductMaterial" />
         </EntityType>
         <EntityType Name="MaterialType">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Title" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Materials" Relationship="Self.FK_Material_MaterialType" FromRole="MaterialType" ToRole="Material" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Materials" Relationship="MyLopuhDbModel.FK_Material_MaterialType" FromRole="MaterialType" ToRole="Material" />
         </EntityType>
         <EntityType Name="MaterialUnit">
           <Key>
@@ -445,7 +521,7 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" />
           <Property Name="Title" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Materials" Relationship="Self.FK_Material_MaterialUnit" FromRole="MaterialUnit" ToRole="Material" />
+          <NavigationProperty Name="Materials" Relationship="MyLopuhDbModel.FK_Material_MaterialUnit" FromRole="MaterialUnit" ToRole="Material" />
         </EntityType>
         <EntityType Name="Order">
           <Key>
@@ -455,8 +531,8 @@
           <Property Name="AgentId" Type="Int32" Nullable="false" />
           <Property Name="Timestamp" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="TypeId" Type="Int32" />
-          <NavigationProperty Name="DeliveryType" Relationship="Self.FK_Order_DeliveryType" FromRole="Order" ToRole="DeliveryType" />
-          <NavigationProperty Name="OrderDecisions" Relationship="Self.FK_OrderDecision_Order" FromRole="Order" ToRole="OrderDecision" />
+          <NavigationProperty Name="DeliveryType" Relationship="MyLopuhDbModel.FK_Order_DeliveryType" FromRole="Order" ToRole="DeliveryType" />
+          <NavigationProperty Name="OrderDecisions" Relationship="MyLopuhDbModel.FK_OrderDecision_Order" FromRole="Order" ToRole="OrderDecision" />
         </EntityType>
         <EntityType Name="OrderDecision">
           <Key>
@@ -467,17 +543,17 @@
           <Property Name="OrderId" Type="Int32" />
           <Property Name="StateId" Type="Int32" />
           <Property Name="Timestamp" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="Manager" Relationship="Self.FK_OrderDecision_Manager" FromRole="OrderDecision" ToRole="Manager" />
-          <NavigationProperty Name="Order" Relationship="Self.FK_OrderDecision_Order" FromRole="OrderDecision" ToRole="Order" />
-          <NavigationProperty Name="OrderState" Relationship="Self.FK_OrderDecision_OrderState" FromRole="OrderDecision" ToRole="OrderState" />
+          <NavigationProperty Name="Manager" Relationship="MyLopuhDbModel.FK_OrderDecision_Manager" FromRole="OrderDecision" ToRole="Manager" />
+          <NavigationProperty Name="Order" Relationship="MyLopuhDbModel.FK_OrderDecision_Order" FromRole="OrderDecision" ToRole="Order" />
+          <NavigationProperty Name="OrderState" Relationship="MyLopuhDbModel.FK_OrderDecision_OrderState" FromRole="OrderDecision" ToRole="OrderState" />
         </EntityType>
         <EntityType Name="OrderState">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="OrderDecisions" Relationship="Self.FK_OrderDecision_OrderState" FromRole="OrderState" ToRole="OrderDecision" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="OrderDecisions" Relationship="MyLopuhDbModel.FK_OrderDecision_OrderState" FromRole="OrderState" ToRole="OrderDecision" />
         </EntityType>
         <EntityType Name="Priority">
           <Key>
@@ -488,8 +564,8 @@
           <Property Name="AgentId" Type="Int32" Nullable="false" />
           <Property Name="ManagerId" Type="Int32" Nullable="false" />
           <Property Name="Timestamp" Type="DateTime" Nullable="false" Precision="3" />
-          <NavigationProperty Name="Agent" Relationship="Self.FK_Priority_Agent" FromRole="Priority" ToRole="Agent" />
-          <NavigationProperty Name="Manager" Relationship="Self.FK_Priority_Manager" FromRole="Priority" ToRole="Manager" />
+          <NavigationProperty Name="Agent" Relationship="MyLopuhDbModel.FK_Priority_Agent" FromRole="Priority" ToRole="Agent" />
+          <NavigationProperty Name="Manager" Relationship="MyLopuhDbModel.FK_Priority_Manager" FromRole="Priority" ToRole="Manager" />
         </EntityType>
         <EntityType Name="Product">
           <Key>
@@ -497,7 +573,7 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Article" Type="Int32" Nullable="false" />
-          <Property Name="Title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Subtitle" Type="String" MaxLength="400" FixedLength="false" Unicode="true" />
           <Property Name="TypeId" Type="Int32" Nullable="false" />
           <Property Name="ImagePath" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
@@ -510,38 +586,48 @@
           <Property Name="Width" Type="Int32" />
           <Property Name="Netto" Type="Int32" />
           <Property Name="Brutto" Type="Int32" />
-          <NavigationProperty Name="ProductType" Relationship="Self.FK_Product_ProductType1" FromRole="Product" ToRole="ProductType" />
-          <NavigationProperty Name="ProductMaterials" Relationship="Self.FK_ProductMaterial_Product" FromRole="Product" ToRole="ProductMaterial" />
+          <NavigationProperty Name="ProductType" Relationship="MyLopuhDbModel.FK_Product_ProductType1" FromRole="Product" ToRole="ProductType" />
+          <NavigationProperty Name="ProductMaterials" Relationship="MyLopuhDbModel.FK_ProductMaterial_Product" FromRole="Product" ToRole="ProductMaterial" />
         </EntityType>
         <EntityType Name="ProductMaterial">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ProductId" Type="Int32" Nullable="false" />
           <Property Name="MaterialId" Type="Int32" Nullable="false" />
           <Property Name="MaterialCount" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Material" Relationship="Self.FK_ProductMaterial_Material" FromRole="ProductMaterial" ToRole="Material" />
-          <NavigationProperty Name="Product" Relationship="Self.FK_ProductMaterial_Product" FromRole="ProductMaterial" ToRole="Product" />
+          <NavigationProperty Name="Material" Relationship="MyLopuhDbModel.FK_ProductMaterial_Material" FromRole="ProductMaterial" ToRole="Material" />
+          <NavigationProperty Name="Product" Relationship="MyLopuhDbModel.FK_ProductMaterial_Product" FromRole="ProductMaterial" ToRole="Product" />
         </EntityType>
         <EntityType Name="ProductType">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Products" Relationship="Self.FK_Product_ProductType1" FromRole="ProductType" ToRole="Product" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Products" Relationship="MyLopuhDbModel.FK_Product_ProductType1" FromRole="ProductType" ToRole="Product" />
         </EntityType>
         <EntityType Name="SalePoint">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
         <Association Name="FK_Agent_AgentType">
-          <End Role="AgentType" Type="Self.AgentType" Multiplicity="0..1" />
-          <End Role="Agent" Type="Self.Agent" Multiplicity="*" />
+          <End Type="MyLopuhDbModel.AgentType" Role="AgentType" Multiplicity="0..1" />
+          <End Type="MyLopuhDbModel.Agent" Role="Agent" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="AgentType">
               <PropertyRef Name="Id" />
@@ -552,8 +638,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Priority_Agent">
-          <End Role="Agent" Type="Self.Agent" Multiplicity="1" />
-          <End Role="Priority" Type="Self.Priority" Multiplicity="*" />
+          <End Type="MyLopuhDbModel.Agent" Role="Agent" Multiplicity="1" />
+          <End Type="MyLopuhDbModel.Priority" Role="Priority" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Agent">
               <PropertyRef Name="Id" />
@@ -564,8 +650,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Order_DeliveryType">
-          <End Role="DeliveryType" Type="Self.DeliveryType" Multiplicity="0..1" />
-          <End Role="Order" Type="Self.Order" Multiplicity="*" />
+          <End Type="MyLopuhDbModel.DeliveryType" Role="DeliveryType" Multiplicity="0..1" />
+          <End Type="MyLopuhDbModel.Order" Role="Order" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="DeliveryType">
               <PropertyRef Name="Id" />
@@ -576,8 +662,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_OrderDecision_Manager">
-          <End Role="Manager" Type="Self.Manager" Multiplicity="0..1" />
-          <End Role="OrderDecision" Type="Self.OrderDecision" Multiplicity="*" />
+          <End Type="MyLopuhDbModel.Manager" Role="Manager" Multiplicity="0..1" />
+          <End Type="MyLopuhDbModel.OrderDecision" Role="OrderDecision" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Manager">
               <PropertyRef Name="Id" />
@@ -588,8 +674,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Priority_Manager">
-          <End Role="Manager" Type="Self.Manager" Multiplicity="1" />
-          <End Role="Priority" Type="Self.Priority" Multiplicity="*" />
+          <End Type="MyLopuhDbModel.Manager" Role="Manager" Multiplicity="1" />
+          <End Type="MyLopuhDbModel.Priority" Role="Priority" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Manager">
               <PropertyRef Name="Id" />
@@ -600,8 +686,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Material_MaterialType">
-          <End Role="MaterialType" Type="Self.MaterialType" Multiplicity="1" />
-          <End Role="Material" Type="Self.Material" Multiplicity="*" />
+          <End Type="MyLopuhDbModel.MaterialType" Role="MaterialType" Multiplicity="1" />
+          <End Type="MyLopuhDbModel.Material" Role="Material" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="MaterialType">
               <PropertyRef Name="Id" />
@@ -612,8 +698,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Material_MaterialUnit">
-          <End Role="MaterialUnit" Type="Self.MaterialUnit" Multiplicity="1" />
-          <End Role="Material" Type="Self.Material" Multiplicity="*" />
+          <End Type="MyLopuhDbModel.MaterialUnit" Role="MaterialUnit" Multiplicity="1" />
+          <End Type="MyLopuhDbModel.Material" Role="Material" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="MaterialUnit">
               <PropertyRef Name="Id" />
@@ -624,8 +710,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ProductMaterial_Material">
-          <End Role="Material" Type="Self.Material" Multiplicity="1" />
-          <End Role="ProductMaterial" Type="Self.ProductMaterial" Multiplicity="*" />
+          <End Type="MyLopuhDbModel.Material" Role="Material" Multiplicity="1" />
+          <End Type="MyLopuhDbModel.ProductMaterial" Role="ProductMaterial" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Material">
               <PropertyRef Name="Id" />
@@ -636,8 +722,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_OrderDecision_Order">
-          <End Role="Order" Type="Self.Order" Multiplicity="0..1" />
-          <End Role="OrderDecision" Type="Self.OrderDecision" Multiplicity="*" />
+          <End Type="MyLopuhDbModel.Order" Role="Order" Multiplicity="0..1" />
+          <End Type="MyLopuhDbModel.OrderDecision" Role="OrderDecision" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Order">
               <PropertyRef Name="Id" />
@@ -648,8 +734,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_OrderDecision_OrderState">
-          <End Role="OrderState" Type="Self.OrderState" Multiplicity="0..1" />
-          <End Role="OrderDecision" Type="Self.OrderDecision" Multiplicity="*" />
+          <End Type="MyLopuhDbModel.OrderState" Role="OrderState" Multiplicity="0..1" />
+          <End Type="MyLopuhDbModel.OrderDecision" Role="OrderDecision" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="OrderState">
               <PropertyRef Name="Id" />
@@ -660,8 +746,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Product_ProductType1">
-          <End Role="ProductType" Type="Self.ProductType" Multiplicity="1" />
-          <End Role="Product" Type="Self.Product" Multiplicity="*" />
+          <End Type="MyLopuhDbModel.ProductType" Role="ProductType" Multiplicity="1" />
+          <End Type="MyLopuhDbModel.Product" Role="Product" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ProductType">
               <PropertyRef Name="Id" />
@@ -672,8 +758,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ProductMaterial_Product">
-          <End Role="Product" Type="Self.Product" Multiplicity="1" />
-          <End Role="ProductMaterial" Type="Self.ProductMaterial" Multiplicity="*" />
+          <End Type="MyLopuhDbModel.Product" Role="Product" Multiplicity="1" />
+          <End Type="MyLopuhDbModel.ProductMaterial" Role="ProductMaterial" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Product">
               <PropertyRef Name="Id" />
@@ -683,71 +769,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="LopuhDbEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Agents" EntityType="Self.Agent" />
-          <EntitySet Name="AgentTypes" EntityType="Self.AgentType" />
-          <EntitySet Name="DeliveryTypes" EntityType="Self.DeliveryType" />
-          <EntitySet Name="Managers" EntityType="Self.Manager" />
-          <EntitySet Name="Materials" EntityType="Self.Material" />
-          <EntitySet Name="MaterialTypes" EntityType="Self.MaterialType" />
-          <EntitySet Name="MaterialUnits" EntityType="Self.MaterialUnit" />
-          <EntitySet Name="Orders" EntityType="Self.Order" />
-          <EntitySet Name="OrderDecisions" EntityType="Self.OrderDecision" />
-          <EntitySet Name="OrderStates" EntityType="Self.OrderState" />
-          <EntitySet Name="Priorities" EntityType="Self.Priority" />
-          <EntitySet Name="Products" EntityType="Self.Product" />
-          <EntitySet Name="ProductMaterials" EntityType="Self.ProductMaterial" />
-          <EntitySet Name="ProductTypes" EntityType="Self.ProductType" />
-          <EntitySet Name="SalePoints" EntityType="Self.SalePoint" />
-          <AssociationSet Name="FK_Agent_AgentType" Association="Self.FK_Agent_AgentType">
-            <End Role="AgentType" EntitySet="AgentTypes" />
-            <End Role="Agent" EntitySet="Agents" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Priority_Agent" Association="Self.FK_Priority_Agent">
-            <End Role="Agent" EntitySet="Agents" />
-            <End Role="Priority" EntitySet="Priorities" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Order_DeliveryType" Association="Self.FK_Order_DeliveryType">
-            <End Role="DeliveryType" EntitySet="DeliveryTypes" />
-            <End Role="Order" EntitySet="Orders" />
-          </AssociationSet>
-          <AssociationSet Name="FK_OrderDecision_Manager" Association="Self.FK_OrderDecision_Manager">
-            <End Role="Manager" EntitySet="Managers" />
-            <End Role="OrderDecision" EntitySet="OrderDecisions" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Priority_Manager" Association="Self.FK_Priority_Manager">
-            <End Role="Manager" EntitySet="Managers" />
-            <End Role="Priority" EntitySet="Priorities" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Material_MaterialType" Association="Self.FK_Material_MaterialType">
-            <End Role="MaterialType" EntitySet="MaterialTypes" />
-            <End Role="Material" EntitySet="Materials" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Material_MaterialUnit" Association="Self.FK_Material_MaterialUnit">
-            <End Role="MaterialUnit" EntitySet="MaterialUnits" />
-            <End Role="Material" EntitySet="Materials" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ProductMaterial_Material" Association="Self.FK_ProductMaterial_Material">
-            <End Role="Material" EntitySet="Materials" />
-            <End Role="ProductMaterial" EntitySet="ProductMaterials" />
-          </AssociationSet>
-          <AssociationSet Name="FK_OrderDecision_Order" Association="Self.FK_OrderDecision_Order">
-            <End Role="Order" EntitySet="Orders" />
-            <End Role="OrderDecision" EntitySet="OrderDecisions" />
-          </AssociationSet>
-          <AssociationSet Name="FK_OrderDecision_OrderState" Association="Self.FK_OrderDecision_OrderState">
-            <End Role="OrderState" EntitySet="OrderStates" />
-            <End Role="OrderDecision" EntitySet="OrderDecisions" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Product_ProductType1" Association="Self.FK_Product_ProductType1">
-            <End Role="ProductType" EntitySet="ProductTypes" />
-            <End Role="Product" EntitySet="Products" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ProductMaterial_Product" Association="Self.FK_ProductMaterial_Product">
-            <End Role="Product" EntitySet="Products" />
-            <End Role="ProductMaterial" EntitySet="ProductMaterials" />
-          </AssociationSet>
-        </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -757,163 +778,174 @@
           <EntitySetMapping Name="Agents">
             <EntityTypeMapping TypeName="MyLopuhDbModel.Agent">
               <MappingFragment StoreEntitySet="Agent">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="TypeId" ColumnName="TypeId" />
-                <ScalarProperty Name="INN" ColumnName="INN" />
-                <ScalarProperty Name="KPP" ColumnName="KPP" />
-                <ScalarProperty Name="Surname" ColumnName="Surname" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Patronymic" ColumnName="Patronymic" />
-                <ScalarProperty Name="Logo" ColumnName="Logo" />
-                <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
                 <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
+                <ScalarProperty Name="Logo" ColumnName="Logo" />
+                <ScalarProperty Name="Patronymic" ColumnName="Patronymic" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Surname" ColumnName="Surname" />
+                <ScalarProperty Name="KPP" ColumnName="KPP" />
+                <ScalarProperty Name="INN" ColumnName="INN" />
+                <ScalarProperty Name="TypeId" ColumnName="TypeId" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AgentTypes">
             <EntityTypeMapping TypeName="MyLopuhDbModel.AgentType">
               <MappingFragment StoreEntitySet="AgentType">
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="DeliveryTypes">
             <EntityTypeMapping TypeName="MyLopuhDbModel.DeliveryType">
               <MappingFragment StoreEntitySet="DeliveryType">
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Managers">
             <EntityTypeMapping TypeName="MyLopuhDbModel.Manager">
               <MappingFragment StoreEntitySet="Manager">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Surname" ColumnName="Surname" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Patronymic" ColumnName="Patronymic" />
-                <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
+                <ScalarProperty Name="Patronymic" ColumnName="Patronymic" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Surname" ColumnName="Surname" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Materials">
             <EntityTypeMapping TypeName="MyLopuhDbModel.Material">
               <MappingFragment StoreEntitySet="Material">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="TypeId" ColumnName="TypeId" />
-                <ScalarProperty Name="Count" ColumnName="Count" />
-                <ScalarProperty Name="UnitId" ColumnName="UnitId" />
-                <ScalarProperty Name="WarehouseCount" ColumnName="WarehouseCount" />
-                <ScalarProperty Name="MinCount" ColumnName="MinCount" />
                 <ScalarProperty Name="Cost" ColumnName="Cost" />
+                <ScalarProperty Name="MinCount" ColumnName="MinCount" />
+                <ScalarProperty Name="WarehouseCount" ColumnName="WarehouseCount" />
+                <ScalarProperty Name="UnitId" ColumnName="UnitId" />
+                <ScalarProperty Name="Count" ColumnName="Count" />
+                <ScalarProperty Name="TypeId" ColumnName="TypeId" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="MaterialTypes">
             <EntityTypeMapping TypeName="MyLopuhDbModel.MaterialType">
               <MappingFragment StoreEntitySet="MaterialType">
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="MaterialUnits">
             <EntityTypeMapping TypeName="MyLopuhDbModel.MaterialUnit">
               <MappingFragment StoreEntitySet="MaterialUnit">
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Orders">
             <EntityTypeMapping TypeName="MyLopuhDbModel.Order">
               <MappingFragment StoreEntitySet="Order">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="AgentId" ColumnName="AgentId" />
-                <ScalarProperty Name="Timestamp" ColumnName="Timestamp" />
                 <ScalarProperty Name="TypeId" ColumnName="TypeId" />
+                <ScalarProperty Name="Timestamp" ColumnName="Timestamp" />
+                <ScalarProperty Name="AgentId" ColumnName="AgentId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="OrderDecisions">
             <EntityTypeMapping TypeName="MyLopuhDbModel.OrderDecision">
               <MappingFragment StoreEntitySet="OrderDecision">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="ManagerId" ColumnName="ManagerId" />
-                <ScalarProperty Name="OrderId" ColumnName="OrderId" />
-                <ScalarProperty Name="StateId" ColumnName="StateId" />
                 <ScalarProperty Name="Timestamp" ColumnName="Timestamp" />
+                <ScalarProperty Name="StateId" ColumnName="StateId" />
+                <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+                <ScalarProperty Name="ManagerId" ColumnName="ManagerId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="OrderStates">
             <EntityTypeMapping TypeName="MyLopuhDbModel.OrderState">
               <MappingFragment StoreEntitySet="OrderState">
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Priorities">
             <EntityTypeMapping TypeName="MyLopuhDbModel.Priority">
               <MappingFragment StoreEntitySet="Priority">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="PriorityLevel" ColumnName="PriorityLevel" />
-                <ScalarProperty Name="AgentId" ColumnName="AgentId" />
-                <ScalarProperty Name="ManagerId" ColumnName="ManagerId" />
                 <ScalarProperty Name="Timestamp" ColumnName="Timestamp" />
+                <ScalarProperty Name="ManagerId" ColumnName="ManagerId" />
+                <ScalarProperty Name="AgentId" ColumnName="AgentId" />
+                <ScalarProperty Name="PriorityLevel" ColumnName="PriorityLevel" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Products">
             <EntityTypeMapping TypeName="MyLopuhDbModel.Product">
               <MappingFragment StoreEntitySet="Product">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Article" ColumnName="Article" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="Subtitle" ColumnName="Subtitle" />
-                <ScalarProperty Name="TypeId" ColumnName="TypeId" />
-                <ScalarProperty Name="ImagePath" ColumnName="ImagePath" />
-                <ScalarProperty Name="BinImage" ColumnName="BinImage" />
-                <ScalarProperty Name="Cost" ColumnName="Cost" />
-                <ScalarProperty Name="PeopleCount" ColumnName="PeopleCount" />
-                <ScalarProperty Name="FactoryId" ColumnName="FactoryId" />
-                <ScalarProperty Name="Height" ColumnName="Height" />
-                <ScalarProperty Name="Length" ColumnName="Length" />
-                <ScalarProperty Name="Width" ColumnName="Width" />
-                <ScalarProperty Name="Netto" ColumnName="Netto" />
                 <ScalarProperty Name="Brutto" ColumnName="Brutto" />
+                <ScalarProperty Name="Netto" ColumnName="Netto" />
+                <ScalarProperty Name="Width" ColumnName="Width" />
+                <ScalarProperty Name="Length" ColumnName="Length" />
+                <ScalarProperty Name="Height" ColumnName="Height" />
+                <ScalarProperty Name="FactoryId" ColumnName="FactoryId" />
+                <ScalarProperty Name="PeopleCount" ColumnName="PeopleCount" />
+                <ScalarProperty Name="Cost" ColumnName="Cost" />
+                <ScalarProperty Name="BinImage" ColumnName="BinImage" />
+                <ScalarProperty Name="ImagePath" ColumnName="ImagePath" />
+                <ScalarProperty Name="TypeId" ColumnName="TypeId" />
+                <ScalarProperty Name="Subtitle" ColumnName="Subtitle" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Article" ColumnName="Article" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ProductMaterials">
             <EntityTypeMapping TypeName="MyLopuhDbModel.ProductMaterial">
               <MappingFragment StoreEntitySet="ProductMaterial">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
-                <ScalarProperty Name="MaterialId" ColumnName="MaterialId" />
                 <ScalarProperty Name="MaterialCount" ColumnName="MaterialCount" />
+                <ScalarProperty Name="MaterialId" ColumnName="MaterialId" />
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ProductTypes">
             <EntityTypeMapping TypeName="MyLopuhDbModel.ProductType">
               <MappingFragment StoreEntitySet="ProductType">
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SalePoints">
             <EntityTypeMapping TypeName="MyLopuhDbModel.SalePoint">
               <MappingFragment StoreEntitySet="SalePoint">
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="MyLopuhDbModel.sysdiagram">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
